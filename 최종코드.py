@@ -82,22 +82,8 @@ with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.5,
                 finger_5 = True
 
 
-            # 5손가락 다 펴져있으면 " 5번째 사진 선정 "
-            if (finger_1 and finger_2 and finger_3 and finger_4 and finger_5):
-                gesture_text = '5th select'
-            elif (finger_2 and finger_3 and finger_4 and finger_5):
-                gesture_text = '4th select'
-            # 2,3,4,번째 손가락 펴져있으면 "3번째 사진 선정"
-            elif(finger_2 and finger_3 and finger_4):
-                gesture_text = '3th select'
-            elif (finger_2 and finger_3 ):
-                gesture_text = '2th select'
-            # " 2번이 펴지면 2번째 사진 선정"
-            elif (finger_2):
-                gesture_text = '1th select'
-
-            # 모든 손가락이 안펴져있으면 " 사진 촬영 준비중 "
-            elif ((not finger_2) and (not finger_3) and (not finger_4)
+            # 5손가락 다 접혀있으면 사진촬영 준비 & 새끼손가락만 펴져있으면 사진촬영 "
+            if  ((not finger_2) and (not finger_3) and (not finger_4)
                   and (not finger_5)):
                 gesture_text = 'Photo Ready!!'
             elif ( (finger_5)):
@@ -161,16 +147,14 @@ with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.5,
 
 
 
-                # 5초에 한 번 실행
-                if time.time() - current_time > 5:
+                # 2초에 한 번씩 직사각형영역 생성
+                if time.time() - current_time > 2:
                     # 랜덤한 직사각형의 좌표 생성
                     x, y, w, h = np.random.randint(0, frame.shape[1] - 300), np.random.randint(0, frame.shape[
                         0] - 300), 300, 300
 
                     # 랜덤한 직사각형 그리기
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-
-
 
                     # 직사각형 정보 저장
                     rect_info = (x, y, w, h)
@@ -262,8 +246,7 @@ with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.5,
             cv2.imshow('Combined Images', combined_image)
             # 창이 열려있는 동안 기다림
             cv2.waitKey(0)
-            # 창 닫기
-            cv2.destroyAllWindows()
+
 
             # 모든 창 닫기
             cv2.destroyAllWindows()
@@ -292,8 +275,6 @@ cap = cv2.VideoCapture(0)
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands()
 
-# OpenCV VideoCapture 객체를 생성하여 웹캠을 엽니다
-cap     = cv2.VideoCapture(0)
 
 # 화면을 8등분할하기 위한 좌표
 regions = [
